@@ -1,145 +1,100 @@
-let currentIndex = 0;
-const slides = document.querySelectorAll('.slide');
-const totalSlides = slides.length;
-// let slideInterval; // Comment this out or remove it if not needed
-
-// Function to show the next slide
-function showNextSlide(index) {
-    slides.forEach((slide, i) => {
-        slide.classList.remove('next');
-        slide.classList.remove('prev');
-        if (i === index) {
-            slide.classList.add('next');
-        }
-    });
-}
-
-// Function to show the previous slide
-function showPrevSlide(index) {
-    slides.forEach((slide, i) => {
-        slide.classList.remove('next');
-        slide.classList.remove('prev');
-        if (i === index) {
-            slide.classList.add('prev');
-        }
-    });
-}
-
-// Function to go to the next slide
-function nextSlide() {
-    currentIndex = (currentIndex + 1) % totalSlides;
-    showNextSlide(currentIndex);
-}
-
-// Function to go to the previous slide
-function prevSlide() {
-    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-    showPrevSlide(currentIndex);
-}
-
-// Remove or comment out the interval code
-// function startAutoSlide() {
-//     slideInterval = setInterval(nextSlide, 7000);
-// }
-
-// Start the slider on the first slide manually
-showNextSlide(currentIndex);
-
-// Add event listeners for touch and click navigation only
-let touchStartX = 0;
-let touchEndX = 0;
-const slider = document.getElementById('slider');
-
-// Touch start event listener
-slider.addEventListener('touchstart', (event) => {
-    touchStartX = event.changedTouches[0].screenX;
-});
-
-// Touch end event listener
-slider.addEventListener('touchend', (event) => {
-    touchEndX = event.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-// Click event listener for arrows
-slider.addEventListener('click', (event) => {
-    const sliderWidth = slider.clientWidth;
-    const clickX = event.clientX;
-
-    if (clickX > sliderWidth / 2) {
-        nextSlide();
-    } else {
-        prevSlide();
-    }
-});
-
-// Handle swipe functionality
-function handleSwipe() {
-    if (touchEndX < touchStartX) {
-        nextSlide();
-    }
-    if (touchEndX > touchStartX) {
-        prevSlide();
-    }
-}
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll(".slide");
     const dots = document.querySelectorAll(".dot");
     const groups = document.querySelectorAll(".image-group");
     let currentIndex = 0;
 
+    // Function to update the slider view
     const updateSlider = (index) => {
+        // Update slides visibility
         slides.forEach((slide, idx) => {
-            slide.classList.toggle("active", idx === index);
+            slide.classList.remove("active");
+            if (idx === index) {
+                slide.classList.add("active");
+                // Update the image group visibility based on the active slide
+                const groupID = slide.getAttribute("data-group");
+                updateImageGroup(groupID);
+            }
         });
 
+        // Update dots visibility
         dots.forEach((dot, idx) => {
-            dot.classList.toggle("active", idx === index);
-        });
-
-        groups.forEach((group, idx) => {
-            group.style.display = idx === index ? "flex" : "none";
+            dot.classList.remove("active");
+            if (idx === index) {
+                dot.classList.add("active");
+            }
         });
     };
 
-    document.querySelector(".prev-btn").addEventListener("click", () => {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        updateSlider(currentIndex);
-    });
-
-    document.querySelector(".next-btn").addEventListener("click", () => {
-        currentIndex = (currentIndex + 1) % slides.length;
-        updateSlider(currentIndex);
-    });
-
-    dots.forEach((dot, idx) => {
-        dot.addEventListener("click", () => {
-            currentIndex = idx;
-            updateSlider(currentIndex);
+    // Function to update the image group visibility
+    const updateImageGroup = (groupID) => {
+        groups.forEach((group) => {
+            if (group.id === groupID) {
+                group.style.display = "flex"; // Show the group of images
+            } else {
+                group.style.display = "none"; // Hide other groups
+            }
         });
+    };
+
+    // Function to go to the next slide
+    const nextSlide = () => {
+        currentIndex = (currentIndex + 1) % slides.length; // Wrap around when going forward
+        updateSlider(currentIndex);
+    };
+
+    // Function to go to the previous slide
+    const prevSlide = () => {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length; // Wrap around when going back
+        updateSlider(currentIndex);
+    };
+
+    // Initialize the slider on page load
+    updateSlider(currentIndex);
+
+    // Add event listeners for touch and click navigation
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const slider = document.getElementById('slider');
+
+    // Touch start event listener
+    slider.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].screenX;
     });
 
-    // Initialize the slider
-    updateSlider(currentIndex);
-});
+    // Touch end event listener
+    slider.addEventListener('touchend', (event) => {
+        touchEndX = event.changedTouches[0].screenX;
+        handleSwipe();
+    });
 
+    // Click event listener for navigation (anywhere on the slider except image groups)
+    slider.addEventListener('click', (event) => {
+        if (!event.target.closest('.image-group')) { // Prevent clicks on image groups
+            const sliderWidth = slider.clientWidth;
+            const clickX = event.clientX;
 
+            if (clickX > sliderWidth / 2) {
+                nextSlide(); // Clicked on the right half, go to the next slide
+            } else {
+                prevSlide(); // Clicked on the left half, go to the previous slide
+            }
+        }
+    });
 
+    // Handle swipe functionality
+    const handleSwipe = () => {
+        if (touchEndX < touchStartX) {
+            nextSlide(); // Swiped left
+        }
+        if (touchEndX > touchStartX) {
+            prevSlide(); // Swiped right
+        }
+    };
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Popup elements
-    const popup = document.getElementById("popup");
-    const popupImage = document.getElementById("popupImage");
-    const popupDescription = document.getElementById("popupDescription");
-    const closePopup = document.getElementById("closePopup");
-
-    // All images under the main slider
+    // Add click event listeners to each image in the groups to show the popup
     const images = document.querySelectorAll(".image-group img");
 
-    // Add click event listeners to each image
     images.forEach((image) => {
         image.addEventListener("click", () => {
             // Set image and description dynamically
@@ -151,53 +106,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Close popup when the close button is clicked
-    closePopup.addEventListener("click", () => {
-        popup.style.display = "none";
-    });
-
-    // Close popup when clicking outside the content
-    popup.addEventListener("click", (event) => {
-        if (event.target === popup) {
-            popup.style.display = "none";
-        }
-    });
-});
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Popup elements
+    // Popup handling
     const popup = document.getElementById("popup");
     const popupImage = document.getElementById("popupImage");
     const popupDescription = document.getElementById("popupDescription");
     const closePopup = document.getElementById("closePopup");
 
-    // Image groups with their descriptions
-    const descriptions = {
-        group1: "Description of Egyptian Museum - Group 1: Ancient artifacts and statues.",
-        group2: "Description of Egyptian Museum - Group 2: Mummies and hieroglyphs.",
-        group3: "Description of Egyptian Museum - Group 3: Historical paintings and jewelry."
-    };
-
-    // All images under the main slider
-    const images = document.querySelectorAll(".image-group img");
-
-    // Add click event listeners to each image
-    images.forEach((image) => {
-        image.addEventListener("click", () => {
-            // Set the image and description dynamically
-            popupImage.src = image.src;
-
-            // Get the group description using the parent group ID
-            const groupID = image.closest(".image-group").id;
-            popupDescription.textContent = descriptions[groupID];
-
-            // Show the popup
-            popup.style.display = "flex";
-        });
-    });
-
     // Close popup when the close button is clicked
     closePopup.addEventListener("click", () => {
         popup.style.display = "none";
@@ -208,5 +122,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target === popup) {
             popup.style.display = "none";
         }
+    });
+
+    // Arrow button events
+    document.querySelector(".prev-btn").addEventListener("click", prevSlide);
+    document.querySelector(".next-btn").addEventListener("click", nextSlide);
+
+    // Dot navigation
+    dots.forEach((dot, idx) => {
+        dot.addEventListener("click", () => {
+            currentIndex = idx;
+            updateSlider(currentIndex);
+        });
     });
 });
