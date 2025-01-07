@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museum Project</title>
+    <link rel="stylesheet" href="./CSS/style.css">
+</head>
+
+<body>
+    <div class="slider" id="slider">
+        <div class="slide active" id="slide1" data-group="group1">
+            <div class="description">
+                <h1 class="title">Title 1</h1>
+                <p class="desc-body">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. At esse praesentium est incidunt repellendus minima.
+                </p>
+            </div>
+        </div>
+        <div class="slide" id="slide2" data-group="group2">
+            <div class="description">
+                <h1 class="title">Title 2</h1>
+                <p class="desc-body">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus quo dignissimos autem voluptas in aspernatur.
+                </p>
+            </div>
+        </div>
+        <div class="slide" id="slide3" data-group="group3">
+            <div class="description">
+                <h1 class="title">Title 3</h1>
+                <p class="desc-body">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, iure ducimus nostrum harum quae eveniet nobis.
+                </p>
+            </div>
+        </div>
+
+        <!-- Groups of images for each slide -->
+        <div class="image-group" id="group1">
+            <img src="./img/img1.jpeg" alt="Description for Image 1">
+            <img src="./img/img1.jpeg" alt="Description for Image 2">
+            <img src="./img/img1.jpeg" alt="Description for Image 3">
+        </div>
+        <div class="image-group" id="group2" style="display: none;">
+            <img src="./img/img2.jpeg" alt="Description for Image 4">
+            <img src="./img/img2.jpeg" alt="Description for Image 5">
+            <img src="./img/img2.jpeg" alt="Description for Image 6">
+        </div>
+        <div class="image-group" id="group3" style="display: none;">
+            <img src="./img/img3.jpeg" alt="Description for Image 7">
+            <img src="./img/img3.jpeg" alt="Description for Image 8">
+            <img src="./img/img3.jpeg" alt="Description for Image 9">
+        </div>
+
+        <!-- Navigation arrows -->
+        <button class="prev-btn">&#10094;</button>
+        <button class="next-btn">&#10095;</button>
+
+        <!-- Dots for navigation -->
+        <div class="dots-container">
+            <span class="dot active" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
+            <span class="dot" data-slide="3"></span>
+        </div>
+    </div>
+
+    <!-- Popup Container -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <button class="close-btn" id="closePopup">&times;</button>
+            <img src="" alt="Popup Image" id="popupImage">
+            <p id="popupDescription"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 Egyptian Museum. All rights reserved.
+    </footer>
+
+    <script src="./JS/script.js"></script>
+</body>
+
+</html>
